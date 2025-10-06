@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StatGUIDE.com - สถิติแม่นยำ ทุกงานวิจัย</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        }
+        .service-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: #334155;
+        }
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .service-detail {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .service-content {
+            background: #1e293b;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 800px;
+            position: relative;
+            border: 1px solid #475569;
+        }
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #475569;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .expert-card {
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .expert-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .form-input {
+            background: #334155;
+            border: 1px solid #475569;
+            color: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            width: 100%;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200">
+    <!-- Navigation -->
+    <nav class="bg-slate-800 shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-blue-400">StatGUIDE</div>
+                    <div class="text-sm text-slate-400 ml-2">.com</div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-slate-300 hover:text-blue-400 transition-colors">หน้าแรก</a>
+                    <!-- เพิ่มลิงก์คอร์สเรียนตรงนี้ -->
+                    <a href="courses.html" class="text-slate-300 hover:text-blue-400 transition-colors">คอร์สเรียน</a>
+                    <a href="#services" class="text-slate-300 hover:text-blue-400 transition-colors">บริการ</a>
+                    <a href="#about" class="text-slate-300 hover:text-blue-400 transition-colors">เกี่ยวกับเรา</a>
+                    <a href="#contact" class="text-slate-300 hover:text-blue-400 transition-colors">ติดต่อ</a>
+                </div>
+                <!-- เพิ่มปุ่มสมาชิกด้านขวา -->
+                <div class="flex items-center space-x-4">
+                    <a href="login.html" class="text-slate-300 hover:text-blue-400 transition-colors text-sm hidden md:block">
+                        เข้าสู่ระบบ
+                    </a>
+                    <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors text-sm">
+                        สมัครสมาชิก
+                    </a>
+                    <button class="md:hidden text-slate-300" onclick="toggleMobileMenu()">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-800 border-t border-slate-700">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home" class="block px-3 py-2 text-slate-300 hover:text-blue-400">หน้าแรก</a>
+                <!-- เพิ่มในเมนูมือถือด้วย -->
+                <a href="courses.html" class="block px-3 py-2 text-slate-300 hover:text-blue-400">คอร์สเรียน</a>
+                <a href="#services" class="block px-3 py-2 text-slate-300 hover:text-blue-400">บริการ</a>
+                <a href="#about" class="block px-3 py-2 text-slate-300 hover:text-blue-400">เกี่ยวกับเรา</a>
+                <a href="#contact" class="block px-3 py-2 text-slate-300 hover:text-blue-400">ติดต่อ</a>
+                <!-- เพิ่มลิงก์สมาชิกในเมนูมือถือ -->
+                <div class="border-t border-slate-700 pt-2 mt-2">
+                    <a href="login.html" class="block px-3 py-2 text-slate-300 hover:text-blue-400">เข้าสู่ระบบ</a>
+                    <a href="register.html" class="block px-3 py-2 text-blue-400 hover:text-blue-300 font-semibold">สมัครสมาชิก</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="gradient-bg pt-20 pb-16 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                        สถิติแม่นยำ<br>
+                        <span class="text-cyan-300">ทุกงานวิจัย</span>
+                    </h1>
+                    <p class="text-xl mb-8 text-slate-200">
+                        เสริมความน่าเชื่อถือในทุกผลลัพธ์ด้วยบริการสถิติครบวงจร
+                        จากผู้เชี่ยวชาญที่คุณไว้วางใจได้
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="scrollToSection('services')" class="bg-cyan-500 text-slate-900 px-8 py-3 rounded-lg font-semibold hover:bg-cyan-400 transition-colors">
+                            เริ่มต้นใช้งาน
+                        </button>
+                        <!-- เพิ่มปุ่มคอร์สเรียน -->
+                        <a href="courses.html" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-slate-900 transition-colors text-center">
+                            เริ่มเรียนฟรี
+                        </a>
+                    </div>
+                    <!-- เพิ่มลิงก์สมาชิกใต้ปุ่มหลัก -->
+                    <div class="mt-6 flex gap-4 justify-center sm:justify-start">
+                        <a href="login.html" class="text-slate-300 hover:text-white text-sm">มีบัญชีแล้ว? เข้าสู่ระบบ</a>
+                        <span class="text-slate-500">|</span>
+                        <a href="register.html" class="text-blue-400 hover:text-blue-300 text-sm font-semibold">สมัครสมาชิก</a>
+                    </div>
+                </div>
+                <div class="text-center floating-animation">
+                    <!-- SVG graphic เดิม -->
+                    <svg class="w-80 h-80 mx-auto" viewBox="0 0 400 400" fill="none">
+                        <!-- ... SVG content เดิม ... -->
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">บริการของเรา</h2>
+                <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                    ครบครันทุกความต้องการด้านสถิติ จากการออกแบบการทดลองไปจนถึงการวิเคราะห์ข้อมูล
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Experimental Design -->
+                <div class="service-card p-8 rounded-xl fade-in" onclick="openService('experimental-design')">
+                    <div class="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Experimental Design</h3>
+                    <p class="text-slate-300 mb-6">ช่วยออกแบบการทดลองที่สอดคล้องกับวัตถุประสงค์ของงานวิจัย เพื่อให้ได้ผลลัพธ์ที่แม่นยำและน่าเชื่อถือ</p>
+                    <div class="text-blue-400 font-semibold hover:text-blue-300 transition-colors">เรียนรู้เพิ่มเติม →</div>
+                </div>
+
+                <!-- Data Analysis -->
+                <div class="service-card p-8 rounded-xl fade-in" onclick="openService('data-analysis')">
+                    <div class="w-16 h-16 bg-purple-600 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Data Analysis & Visualization</h3>
+                    <p class="text-slate-300 mb-6">วิเคราะห์ข้อมูลพร้อมสร้างกราฟและการนำเสนอที่เข้าใจง่าย ช่วยให้ผลการวิจัยของคุณโดดเด่นและน่าเชื่อถือ</p>
+                    <div class="text-purple-400 font-semibold hover:text-purple-300 transition-colors">เรียนรู้เพิ่มเติม →</div>
+                </div>
+
+                <!-- Online Courses -->
+                <div class="service-card p-8 rounded-xl fade-in" onclick="openService('online-courses')">
+                    <div class="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Online Courses</h3>
+                    <p class="text-slate-300 mb-6">เปิดคอร์สออนไลน์เพื่อเสริมสร้างทักษะด้านสถิติ เรียนรู้ได้ตามความสะดวก จากผู้เชี่ยวชาญที่มีประสบการณ์</p>
+                    <div class="text-green-400 font-semibold hover:text-green-300 transition-colors">เรียนรู้เพิ่มเติม →</div>
+                </div>
+
+                <!-- Statistical Consultant -->
+                <div class="service-card p-8 rounded-xl fade-in" onclick="openService('statistical-consultant')">
+                    <div class="w-16 h-16 bg-orange-600 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Statistical Consultant</h3>
+                    <p class="text-slate-300 mb-6">ให้คำปรึกษาจากผู้เชี่ยวชาญเฉพาะทาง รับประกันคุณภาพและความถูกต้องของการวิเคราะห์สถิติในงานวิจัยของคุณ</p>
+                    <div class="text-orange-400 font-semibold hover:text-orange-300 transition-colors">เรียนรู้เพิ่มเติม →</div>
+                </div>
+
+                <!-- Chat Bot -->
+                <div class="service-card p-8 rounded-xl fade-in lg:col-span-2" onclick="openService('chat-bot')">
+                    <div class="w-16 h-16 bg-pink-600 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Chat Bot - ผู้ช่วยอัจฉริยะ</h3>
+                    <p class="text-slate-300 mb-6">ผู้ช่วยอัจฉริยะที่ตอบคำถามสถิติพื้นฐานได้ฟรีตลอดเวลา พร้อมให้คำแนะนำเบื้องต้นสำหรับงานวิจัยของคุณ</p>
+                    <div class="flex gap-4">
+                        <button class="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-500 transition-colors" onclick="event.stopPropagation(); openChatBot()">ทดลองใช้ฟรี</button>
+                        <div class="text-pink-400 font-semibold hover:text-pink-300 transition-colors">เรียนรู้เพิ่มเติม →</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Detail Modals -->
+    <div id="service-modal" class="service-detail">
+        <div class="service-content" id="service-content">
+            <!-- Content will be loaded here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Chat Bot Interface -->
+    <div id="chat-bot" class="service-detail">
+        <div class="service-content">
+            <button class="close-btn" onclick="closeChatBot()">×</button>
+            <h2 class="text-2xl font-bold text-white mb-6">Chat Bot - ผู้ช่วยอัจฉริยะ</h2>
+            <div class="bg-slate-700 p-4 rounded-lg mb-4 h-64 overflow-y-auto" id="chat-messages">
+                <div class="bg-slate-600 p-3 rounded-lg mb-2">
+                    <strong class="text-cyan-400">StatBot:</strong> สวัสดีครับ! ผมคือผู้ช่วยอัจฉริยะสำหรับคำถามด้านสถิติ 
+                    ผมสามารถตอบคำถามเกี่ยวกับสถิติพื้นฐาน, การวิเคราะห์ข้อมูล, การออกแบบการทดลอง, และให้คำแนะนำเบื้องต้นเกี่ยวกับงานวิจัยของคุณ 
+                    มีอะไรให้ผมช่วยเหลือครับ?
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="chat-input" placeholder="พิมพ์คำถามของคุณ..." class="form-input">
+                <button onclick="sendMessage()" class="bg-cyan-600 text-white px-6 py-2 rounded-lg hover:bg-cyan-500 transition-colors">ส่ง</button>
+            </div>
+            <div class="mt-4 text-sm text-slate-400">
+                <strong>คำถามตัวอย่าง:</strong> 
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <button onclick="askQuestion('t-test ใช้เมื่อไหร่และมีกี่ประเภท?')" class="bg-slate-600 px-3 py-1 rounded text-sm hover:bg-slate-500">t-test ใช้เมื่อไหร่?</button>
+                    <button onclick="askQuestion('ANOVA คืออะไรและใช้เมื่อใด?')" class="bg-slate-600 px-3 py-1 rounded text-sm hover:bg-slate-500">ANOVA คืออะไร?</button>
+                    <button onclick="askQuestion('การวิเคราะห์ถดถอยเชิงเส้นและโลจิสติกแตกต่างกันอย่างไร?')" class="bg-slate-600 px-3 py-1 rounded text-sm hover:bg-slate-500">การวิเคราะห์ถดถอย</button>
+                    <button onclick="askQuestion('ควรใช้สถิติพารามิตริกหรือนอนพารามิตริกเมื่อไหร่?')" class="bg-slate-600 px-3 py-1 rounded text-sm hover:bg-slate-500">สถิติพารามิตริก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">เกี่ยวกับ StatGUIDE</h2>
+                    <p class="text-lg text-slate-300 mb-6">
+                        StatGUIDE.com เกิดขึ้นจากความตระหนักถึงความจำเป็นของยุคที่ข้อมูลคือหัวใจ 
+                        แต่ทักษะและการประยุกต์ใช้สถิติกลับเป็นอุปสรรคสำคัญสำหรับนักวิจัยและนักศึกษา
+                    </p>
+                    <p class="text-lg text-slate-300 mb-8">
+                        เราเชื่อมโยง "ความรู้ เครื่องมือ และที่ปรึกษา" เข้าด้วยกัน 
+                        ไม่เพียงแต่ตอบโจทย์การแก้ปัญหาของผู้วิจัยเท่านั้น 
+                        แต่ยังเป็นการยกระดับคุณภาพของงานวิจัยไทยให้มีความน่าเชื่อถือและก้าวสู่มาตรฐานสากล
+                    </p>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-400 mb-2">1000+</div>
+                            <div class="text-slate-400">โปรเจกต์ที่สำเร็จ</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-400 mb-2">500+</div>
+                            <div class="text-slate-400">นักวิจัยที่ไว้วางใจ</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fade-in">
+                    <div class="bg-slate-800 p-8 rounded-2xl shadow-lg border border-slate-700">
+                        <h3 class="text-2xl font-semibold text-white mb-6 text-center">พันธกิจของเรา</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-white">ความแม่นยำ</h4>
+                                    <p class="text-slate-300">มุ่งมั่นให้บริการสถิติที่แม่นยำและเชื่อถือได้ ด้วยวิธีการที่ทันสมัยและได้มาตรฐาน</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-white">ครบวงจร</h4>
+                                    <p class="text-slate-300">บริการตั้งแต่การออกแบบการทดลองไปจนถึงการวิเคราะห์ข้อมูลและการรายงานผล</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-white">มาตรฐานสากล</h4>
+                                    <p class="text-slate-300">ยกระดับงานวิจัยไทยสู่มาตรฐานระดับโลก ด้วยทีมผู้เชี่ยวชาญที่มีประสบการณ์</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg text-white">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">พร้อมเริ่มต้นงานวิจัยที่น่าเชื่อถือแล้วหรือยัง?</h2>
+            <p class="text-xl mb-8 text-slate-200">
+                เริ่มต้นด้วยการปรึกษาฟรี หรือทดลองใช้ Chat Bot ของเราได้เลยวันนี้
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="openService('consultation')" class="bg-cyan-500 text-slate-900 px-8 py-3 rounded-lg font-semibold hover:bg-cyan-400 transition-colors">
+                    ปรึกษาฟรี
+                </button>
+                <!-- ปรับปุ่ม Chat Bot ให้เป็นลิงก์ไปหน้าคอร์สเรียน -->
+                <a href="courses.html" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-slate-900 transition-colors text-center">
+                    เริ่มเรียนฟรี
+                </a>
+            </div>
+            <!-- เพิ่มลิงก์สมาชิก -->
+            <div class="mt-6">
+                <p class="text-slate-300 mb-2">ต้องการเข้าถึงเนื้อหาแบบเต็มรูปแบบ?</p>
+                <a href="register.html" class="text-blue-400 hover:text-blue-300 font-semibold">สมัครสมาชิกตอนนี้</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">ติดต่อเรา</h2>
+                <p class="text-xl text-slate-300">พร้อมให้คำปรึกษาและช่วยเหลือคุณในทุกขั้นตอนของงานวิจัย</p>
+            </div>
+<div>
+<div class="text-center mb-6">
+    <h4 class="text-2xl font-bold text-white mb-2">สมาชิก</h4>
+    <div class="w-20 h-1 bg-blue-400 mx-auto rounded-full"></div>
+</div>
+
+<div class="grid grid-cols-2 gap-3">
+    <!-- สมาชิกคนที่ 1 -->
+    <div class="text-center">
+        <div class="bg-slate-700 p-3 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="text-xs text-pink-400 font-semibold">IG</span>
+            </div>
+            <div class="text-white text-sm font-medium">nroz_er</div>
+            <div class="text-slate-400 text-xs mt-1">คณิตฯ กุดกลาง</div>
+            <div class="text-blue-400 text-xs mt-1">653020202-7</div>
+        </div>
+    </div>
+
+    <!-- สมาชิกคนที่ 2 -->
+    <div class="text-center">
+        <div class="bg-slate-700 p-3 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="text-xs text-pink-400 font-semibold">IG</span>
+            </div>
+            <div class="text-white text-sm font-medium">6thxn_narat_tinn</div>
+            <div class="text-slate-400 text-xs mt-1">ทินราช เพ็งเภา</div>
+            <div class="text-blue-400 text-xs mt-1">653020208-5</div>
+        </div>
+    </div>
+
+    <!-- สมาชิกคนที่ 3 -->
+    <div class="text-center">
+        <div class="bg-slate-700 p-3 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="text-xs text-pink-400 font-semibold">IG</span>
+            </div>
+            <div class="text-white text-sm font-medium">p01.29</div>
+            <div class="text-slate-400 text-xs mt-1">ธีรภัทร์ เพชรดง</div>
+            <div class="text-blue-400 text-xs mt-1">653020209-3</div>
+        </div>
+    </div>
+
+    <!-- สมาชิกคนที่ 4 -->
+    <div class="text-center">
+        <div class="bg-slate-700 p-3 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="text-xs text-pink-400 font-semibold">IG</span>
+            </div>
+            <div class="text-white text-sm font-medium">_amthnny.47</div>
+            <div class="text-slate-400 text-xs mt-1">ปาณัสย์ โรจน์พัฒนเดชา</div>
+            <div class="text-blue-400 text-xs mt-1">653020210-9</div>
+        </div>
+    </div>
+
+    <!-- สมาชิกคนที่ 5 -->
+    <div class="text-center">
+        <div class="bg-slate-700 p-3 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="text-xs text-pink-400 font-semibold">IG</span>
+            </div>
+            <div class="text-white text-sm font-medium">not_my_sunflower_</div>
+            <div class="text-slate-400 text-xs mt-1">เพ็ญนภา แก้วมูลเมือง</div>
+            <div class="text-blue-400 text-xs mt-1">653020215-8</div>
+        </div>
+    </div>
+
+    <!-- สมาชิกคนที่ 6 -->
+    <div class="text-center">
+        <div class="bg-slate-700 p-3 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="text-xs text-pink-400 font-semibold">IG</span>
+            </div>
+            <div class="text-white text-sm font-medium">xy4ymx_</div>
+            <div class="text-slate-400 text-xs mt-1">ณัฐภัทร ทักษิณ</div>
+            <div class="text-blue-400 text-xs mt-1">653020568-5</div>
+        </div>
+    </div>
+
+    <!-- สมาชิกคนที่ 7 -->
+    <div class="text-center">
+        <div class="bg-slate-700 p-3 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="text-xs text-pink-400 font-semibold">IG</span>
+            </div>
+            <div class="text-white text-sm font-medium">29okx</div>
+            <div class="text-slate-400 text-xs mt-1">กนกณัฐ เครือเนตร</div>
+            <div class="text-blue-400 text-xs mt-1">653020599-4</div>
+        </div>
+    </div>
+
+    <!-- สมาชิกคนที่ 8 -->
+    <div class="text-center">
+        <div class="bg-slate-700 p-3 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="text-xs text-pink-400 font-semibold">IG</span>
+            </div>
+            <div class="text-white text-sm font-medium">yusarha</div>
+            <div class="text-slate-400 text-xs mt-1">คมกฤษณ์ เลาสูงเนิน</div>
+            <div class="text-blue-400 text-xs mt-1">653020601-3</div>
+        </div>
+    </div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-4 gap-8">
+            <div>
+                <div class="text-2xl font-bold text-blue-400 mb-4">StatGUIDE</div>
+                <p class="text-slate-400 mb-4">สถิติแม่นยำ ทุกงานวิจัย เสริมความน่าเชื่อถือในทุกผลลัพธ์</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">บริการ</h4>
+                <ul class="space-y-2 text-slate-400">
+                    <li><a href="#" class="hover:text-blue-400 transition-colors" onclick="openService('experimental-design')">Experimental Design</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition-colors" onclick="openService('data-analysis')">Data Analysis</a></li>
+                    <!-- เพิ่มลิงก์คอร์สเรียน -->
+                    <li><a href="courses.html" class="hover:text-blue-400 transition-colors">คอร์สเรียน</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition-colors" onclick="openService('statistical-consultant')">Consultation</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">บัญชี</h4>
+                <ul class="space-y-2 text-slate-400">
+                    <!-- เพิ่มลิงก์สมาชิก -->
+                    <li><a href="login.html" class="hover:text-blue-400 transition-colors">เข้าสู่ระบบ</a></li>
+                    <li><a href="register.html" class="hover:text-blue-400 transition-colors">สมัครสมาชิก</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition-colors">คู่มือการใช้งาน</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4 text-white">ติดตาม</h4>
+                <!-- ... social icons เดิม ... -->
+            </div>
+        </div>
+        <div class="border-t border-slate-800 mt-8 pt-8 text-center text-slate-400">
+            <p>&copy; 2025 StatGUIDE.com. สงวนลิขสิทธิ์.</p>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        // Service data with detailed descriptions
+        const services = {
+            'experimental-design': {
+                title: 'Experimental Design',
+                description: 'ช่วยออกแบบการทดลองที่สอดคล้องกับวัตถุประสงค์ของงานวิจัย เพื่อให้ได้ผลลัพธ์ที่แม่นยำและน่าเชื่อถือ',
+                details: `
+                    <h2 class="text-2xl font-bold text-white mb-6">Experimental Design</h2>
+                    <div class="space-y-4">
+                        <p class="text-slate-300">บริการออกแบบการทดลองทางสถิติที่ครอบคลุมทุกด้านของการวิจัย:</p>
+                        
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-cyan-400 mb-3">บริการที่ครอบคลุม:</h4>
+                            <ul class="list-disc list-inside text-slate-300 space-y-2">
+                                <li><strong>การกำหนดกลุ่มทดลองและกลุ่มควบคุม</strong> - ออกแบบกลุ่มทดลองที่เหมาะสมกับวัตถุประสงค์การวิจัย</li>
+                                <li><strong>การคำนวณขนาดตัวอย่าง</strong> - ใช้โปรแกรมเฉพาะทางคำนวณขนาดตัวอย่างที่เหมาะสมด้วย Power Analysis</li>
+                                <li><strong>การออกแบบบล็อกและสุ่มตัวอย่าง</strong> - ออกแบบการสุ่มตัวอย่างที่ลดอคติและเพิ่มความน่าเชื่อถือ</li>
+                                <li><strong>การวางแผนการเก็บข้อมูล</strong> - ออกแบบฟอร์มเก็บข้อมูลและกำหนดวิธีการเก็บที่มาตรฐาน</li>
+                                <li><strong>การป้องกันอคติ</strong> - ออกแบบ Double-blind, Single-blind trials เพื่อลดอคติ</li>
+                                <li><strong>การเลือกสถิติที่เหมาะสม</strong> - ให้คำแนะนำเกี่ยวกับสถิติที่ควรใช้ในการวิเคราะห์ข้อมูล</li>
+                            </ul>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mt-4">
+                            <div class="bg-blue-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-400 mb-2">เหมาะสำหรับ:</h4>
+                                <p class="text-blue-300 text-sm">งานวิจัยทางการแพทย์, การเกษตร, วิทยาศาสตร์, สังคมศาสตร์, งานวิจัยทางคลินิก</p>
+                            </div>
+                            <div class="bg-purple-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-purple-400 mb-2">ระยะเวลา:</h4>
+                                <p class="text-purple-300 text-sm">1-2 สัปดาห์ ขึ้นกับความซับซ้อนของงานวิจัย</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-green-400 mb-2">ผลลัพธ์ที่ได้รับ:</h4>
+                            <ul class="text-slate-300 text-sm space-y-1">
+                                <li>✓ แผนการทดลองที่สมบูรณ์พร้อมเหตุผล</li>
+                                <li>✓ การคำนวณขนาดตัวอย่างที่เหมาะสม</li>
+                                <li>✓ วิธีการสุ่มตัวอย่างและจัดกลุ่ม</li>
+                                <li>✓ แบบฟอร์มเก็บข้อมูลที่ได้มาตรฐาน</li>
+                                <li>✓ คำแนะนำเกี่ยวกับสถิติที่ควรใช้</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="requestService('experimental-design')" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-500 transition-colors">ขอคำปรึกษา</button>
+                    </div>
+                `
+            },
+            'data-analysis': {
+                title: 'Data Analysis & Visualization',
+                description: 'วิเคราะห์ข้อมูลพร้อมสร้างกราฟและการนำเสนอที่เข้าใจง่าย',
+                details: `
+                    <h2 class="text-2xl font-bold text-white mb-6">Data Analysis & Visualization</h2>
+                    <div class="space-y-4">
+                        <p class="text-slate-300">บริการวิเคราะห์ข้อมูลครบวงจรพร้อมการนำเสนอที่เข้าใจง่ายสำหรับทุกประเภทงานวิจัย:</p>
+                        
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-400 mb-3">บริการวิเคราะห์ข้อมูล:</h4>
+                            <ul class="list-disc list-inside text-slate-300 space-y-2">
+                                <li><strong>สถิติพรรณนา</strong> - ค่าเฉลี่ย, ส่วนเบี่ยงเบนมาตรฐาน, ความถี่, ร้อยละ</li>
+                                <li><strong>สถิติอนุมาน</strong> - การทดสอบสมมติฐาน (t-test, ANOVA, Chi-square, Mann-Whitney)</li>
+                                <li><strong>การวิเคราะห์ถดถอย</strong> - Linear regression, Logistic regression, Multiple regression</li>
+                                <li><strong>การวิเคราะห์ความแปรปรวน</strong> - ANOVA, ANCOVA, MANOVA</li>
+                                <li><strong>การวิเคราะห์ปัจจัย</strong> - Factor analysis, Principal component analysis</li>
+                                <li><strong>การวิเคราะห์ความอยู่รอด</strong> - Survival analysis, Kaplan-Meier, Cox regression</li>
+                                <li><strong>การวิเคราะห์ข้อมูลเชิงลำดับ</strong> - Time series analysis, Longitudinal data analysis</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-pink-400 mb-3">บริการสร้าง Visualization:</h4>
+                            <ul class="list-disc list-inside text-slate-300 space-y-2">
+                                <li><strong>กราฟพื้นฐาน</strong> - Bar chart, Line chart, Scatter plot, Histogram</li>
+                                <li><strong>กราฟเชิงสถิติ</strong> - Box plot, Violin plot, Forest plot, ROC curve</li>
+                                <li><strong>แผนที่ความร้อน</strong> - Heatmap, Correlation matrix</li>
+                                <li><strong>อินโฟกราฟิก</strong> - Infographic สำหรับรายงานและการนำเสนอ</li>
+                                <li><strong>Interactive dashboard</strong> - Dashboard ที่สามารถโต้ตอบได้สำหรับการสำรวจข้อมูล</li>
+                            </ul>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-purple-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-purple-400 mb-2">ซอฟต์แวร์ที่ใช้:</h4>
+                                <p class="text-purple-300 text-sm">R, Python, SPSS, SAS, GraphPad Prism, JMP, Stata</p>
+                            </div>
+                            <div class="bg-green-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-400 mb-2">รูปแบบการส่งมอบ:</h4>
+                                <p class="text-green-300 text-sm">รายงานการวิเคราะห์, กราฟคุณภาพสูง, Code สำหรับ reproduce</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="requestService('data-analysis')" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-500 transition-colors">ขอคำปรึกษา</button>
+                    </div>
+                `
+            },
+            'online-courses': {
+                title: 'Online Courses',
+                description: 'เปิดคอร์สออนไลน์เพื่อเสริมสร้างทักษะด้านสถิติ',
+                details: `
+                    <h2 class="text-2xl font-bold text-white mb-6">Online Courses</h2>
+                    <div class="space-y-4">
+                        <p class="text-slate-300">คอร์สเรียนออนไลน์ที่ออกแบบมาเพื่อนักวิจัยโดยเฉพาะ โดยผู้เชี่ยวชาญด้านสถิติ:</p>
+                        
+                        <form class="space-y-4 bg-slate-700 p-6 rounded-lg">
+                            <h4 class="font-semibold text-green-400 mb-4">ลงทะเบียนรับข้อมูลคอร์สเรียน</h4>
+                            <div>
+                                <label class="block text-slate-300 mb-2">ชื่อ-นามสกุล</label>
+                                <input type="text" class="form-input" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-2">อีเมล</label>
+                                <input type="email" class="form-input" placeholder="กรุณากรอกอีเมล" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-2">เบอร์โทรศัพท์</label>
+                                <input type="tel" class="form-input" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-2">คอร์สที่สนใจ</label>
+                                <select class="form-input">
+                                    <option value="">เลือกคอร์สที่สนใจ</option>
+                                    <option value="basic">สถิติพื้นฐานสำหรับงานวิจัย</option>
+                                    <option value="r">การวิเคราะห์ข้อมูลด้วย R</option>
+                                    <option value="spss">สถิติด้วย SPSS</option>
+                                    <option value="advanced">สถิติขั้นสูงสำหรับงานวิจัย</option>
+                                    <option value="visualization">การสร้าง Visualization</option>
+                                </select>
+                            </div>
+                        </form>
+
+                        <div class="grid md:grid-cols-2 gap-4 mt-4">
+                            <div class="bg-green-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-400 mb-2">สถิติพื้นฐาน</h4>
+                                <p class="text-green-300 text-sm mb-2">เหมาะสำหรับผู้เริ่มต้น</p>
+                                <p class="text-green-200 font-bold">1,290 บาท</p>
+                                <ul class="text-green-300 text-xs mt-2 space-y-1">
+                                    <li>✓ ความรู้สถิติพื้นฐาน</li>
+                                    <li>✓ การทดสอบสมมติฐาน</li>
+                                    <li>✓ ระยะเวลา 8 ชั่วโมง</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-400 mb-2">การวิเคราะห์ข้อมูลด้วย R</h4>
+                                <p class="text-green-300 text-sm mb-2">ระดับกลาง</p>
+                                <p class="text-green-200 font-bold">2,490 บาท</p>
+                                <ul class="text-green-300 text-xs mt-2 space-y-1">
+                                    <li>✓ Programming with R</li>
+                                    <li>✓ Data visualization</li>
+                                    <li>✓ ระยะเวลา 16 ชั่วโมง</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-400 mb-2">สถิติสำหรับงานวิจัย</h4>
+                                <p class="text-green-300 text-sm mb-2">ระดับสูง</p>
+                                <p class="text-green-200 font-bold">3,290 บาท</p>
+                                <ul class="text-green-300 text-xs mt-2 space-y-1">
+                                    <li>✓ Advanced statistical methods</li>
+                                    <li>✓ Research paper preparation</li>
+                                    <li>✓ ระยะเวลา 20 ชั่วโมง</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-400 mb-2">การสร้าง Visualization</h4>
+                                <p class="text-green-300 text-sm mb-2">ทุกระดับ</p>
+                                <p class="text-green-200 font-bold">1,890 บาท</p>
+                                <ul class="text-green-300 text-xs mt-2 space-y-1">
+                                    <li>✓ Data visualization techniques</li>
+                                    <li>✓ Interactive dashboards</li>
+                                    <li>✓ ระยะเวลา 12 ชั่วโมง</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="enrollCourse()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-500 transition-colors">สมัครเรียน</button>
+                    </div>
+                `
+            },
+            'statistical-consultant': {
+                title: 'Statistical Consultant',
+                description: 'ให้คำปรึกษาจากผู้เชี่ยวชาญเฉพาะทาง',
+                details: `
+                    <h2 class="text-2xl font-bold text-white mb-6">Statistical Consultant</h2>
+                    <div class="space-y-4">
+                        <p class="text-slate-300">บริการให้คำปรึกษาจากผู้เชี่ยวชาญด้านสถิติที่มีประสบการณ์ในสาขาต่างๆ:</p>
+                        
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-orange-400 mb-3">ทีมผู้เชี่ยวชาญของเรา:</h4>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="expert-card">
+                                    <h5 class="font-semibold text-white mb-2">ดร. สมชาย ใจดี</h5>
+                                    <p class="text-orange-400 text-sm mb-2">PhD in Biostatistics</p>
+                                    <p class="text-slate-400 text-xs">เชี่ยวชาญ: สถิติการแพทย์, Clinical trials, Survival analysis</p>
+                                    <p class="text-slate-400 text-xs mt-2">ประสบการณ์: 10+ ปี</p>
+                                </div>
+                                <div class="expert-card">
+                                    <h5 class="font-semibold text-white mb-2">ดร. สมหญิง เก่งสถิติ</h5>
+                                    <p class="text-orange-400 text-sm mb-2">PhD in Statistics</p>
+                                    <p class="text-slate-400 text-xs">เชี่ยวชาญ: Multivariate analysis, Machine learning, Data mining</p>
+                                    <p class="text-slate-400 text-xs mt-2">ประสบการณ์: 8+ ปี</p>
+                                </div>
+                                <div class="expert-card">
+                                    <h5 class="font-semibold text-white mb-2">ผศ. ดร. วิทย์ วิจัยดี</h5>
+                                    <p class="text-orange-400 text-sm mb-2">PhD in Social Statistics</p>
+                                    <p class="text-slate-400 text-xs">เชี่ยวชาญ: Social science research, Survey design, Structural equation modeling</p>
+                                    <p class="text-slate-400 text-xs mt-2">ประสบการณ์: 12+ ปี</p>
+                                </div>
+                                <div class="expert-card">
+                                    <h5 class="font-semibold text-white mb-2">รศ. ดร. เกษตร พัฒนา</h5>
+                                    <p class="text-orange-400 text-sm mb-2">PhD in Agricultural Statistics</p>
+                                    <p class="text-slate-400 text-xs">เชี่ยวชาญ: Experimental design, Agricultural research, Mixed models</p>
+                                    <p class="text-slate-400 text-xs mt-2">ประสบการณ์: 15+ ปี</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-orange-400 mb-3">บริการให้คำปรึกษา:</h4>
+                            <ul class="list-disc list-inside text-slate-300 space-y-2">
+                                <li><strong>ให้คำแนะนำด้านระเบียบวิธีวิจัย</strong> - ช่วยออกแบบกรอบแนวคิดและการดำเนินการวิจัย</li>
+                                <li><strong>ช่วยเลือกวิธีการวิเคราะห์ที่เหมาะสม</strong> - ให้คำแนะนำเกี่ยวกับสถิติที่ควรใช้กับข้อมูลของคุณ</li>
+                                <li><strong>ตรวจสอบความถูกต้องของการวิเคราะห์</strong> - ตรวจสอบผลการวิเคราะห์และความถูกต้องของวิธีการ</li>
+                                <li><strong>ให้คำปรึกษาการตีความผลลัพธ์</strong> - ช่วยแปลผลสถิติเป็นภาษาที่เข้าใจง่าย</li>
+                                <li><strong>ช่วยเตรียมข้อมูลสำหรับการตีพิมพ์</strong> - ให้คำแนะนำเกี่ยวกับการรายงานผลทางสถิติในวารสาร</li>
+                                <li><strong>ให้คำปรึกษาการตอบข้อซักถามจาก reviewer</strong> - ช่วยเตรียมการตอบคำถามทางสถิติจากวารสาร</li>
+                            </ul>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-orange-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-orange-400 mb-2">รูปแบบการให้บริการ:</h4>
+                                <p class="text-orange-300 text-sm">ออนไลน์, ปรึกษาส่วนตัว, รายชั่วโมง หรือแบบแพ็กเกจ</p>
+                            </div>
+                            <div class="bg-blue-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-400 mb-2">ค่าใช้จ่าย:</h4>
+                                <p class="text-blue-300 text-sm">เริ่มต้น 1,500 บาท/ชั่วโมง หรือแพ็กเกจรายเดือน</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="requestConsultation()" class="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-500 transition-colors">นัดหมายการปรึกษา</button>
+                    </div>
+                `
+            },
+            'consultation': {
+                title: 'ปรึกษาฟรี',
+                description: 'บริการปรึกษาฟรีสำหรับงานวิจัยของคุณ',
+                details: `
+                    <h2 class="text-2xl font-bold text-white mb-6">ปรึกษาฟรี 30 นาที</h2>
+                    <div class="space-y-4">
+                        <p class="text-slate-300">เรามอบบริการปรึกษาฟรี 30 นาที สำหรับนักวิจัยที่สนใจใช้บริการของเรา:</p>
+                        <form class="space-y-4 bg-slate-700 p-6 rounded-lg">
+                            <div>
+                                <label class="block text-slate-300 mb-2">ชื่อ-นามสกุล</label>
+                                <input type="text" class="form-input" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-2">อีเมล</label>
+                                <input type="email" class="form-input" placeholder="กรุณากรอกอีเมล" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-2">เบอร์โทรศัพท์</label>
+                                <input type="tel" class="form-input" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-2">สาขางานวิจัย</label>
+                                <select class="form-input">
+                                    <option value="">เลือกสาขางานวิจัย</option>
+                                    <option value="medical">การแพทย์และสุขภาพ</option>
+                                    <option value="social">สังคมศาสตร์และมนุษยศาสตร์</option>
+                                    <option value="science">วิทยาศาสตร์และเทคโนโลยี</option>
+                                    <option value="agriculture">เกษตรศาสตร์</option>
+                                    <option value="business">ธุรกิจและการจัดการ</option>
+                                    <option value="education">การศึกษา</option>
+                                    <option value="other">อื่นๆ</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-2">รายละเอียดงานวิจัย</label>
+                                <textarea class="form-input h-24" placeholder="กรุณาระบุรายละเอียดงานวิจัยของคุณ เช่น วัตถุประสงค์, ปัญหาที่พบ, ความช่วยเหลือที่ต้องการ"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 mb-2">วันที่สะดวกรับการปรึกษา</label>
+                                <input type="date" class="form-input">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="submitConsultation()" class="bg-cyan-500 text-slate-900 px-6 py-2 rounded-lg hover:bg-cyan-400 transition-colors">ส่งคำขอการปรึกษา</button>
+                    </div>
+                `
+            },
+            'chat-bot': {
+                title: 'Chat Bot - ผู้ช่วยอัจฉริยะ',
+                description: 'ผู้ช่วยอัจฉริยะที่ตอบคำถามสถิติพื้นฐานได้ฟรีตลอดเวลา',
+                details: `
+                    <h2 class="text-2xl font-bold text-white mb-6">Chat Bot - ผู้ช่วยอัจฉริยะ</h2>
+                    <div class="space-y-4">
+                        <p class="text-slate-300">ผู้ช่วยอัจฉริยะที่สามารถตอบคำถามด้านสถิติได้อย่างครอบคลุม:</p>
+                        
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-pink-400 mb-3">ความสามารถของ Chat Bot:</h4>
+                            <ul class="list-disc list-inside text-slate-300 space-y-2">
+                                <li>ตอบคำถามเกี่ยวกับสถิติพื้นฐานและขั้นสูง</li>
+                                <li>ให้คำแนะนำเกี่ยวกับวิธีการวิเคราะห์ข้อมูล</li>
+                                <li>ช่วยเลือกสถิติที่เหมาะสมกับประเภทข้อมูล</li>
+                                <li>อธิบายแนวคิดทางสถิติด้วยภาษาที่เข้าใจง่าย</li>
+                                <li>ให้ตัวอย่างการใช้งานสถิติในงานวิจัยจริง</li>
+                                <li>แนะนำแหล่งข้อมูลและบทความเพิ่มเติม</li>
+                            </ul>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-pink-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-pink-400 mb-2">บริการฟรี:</h4>
+                                <p class="text-pink-300 text-sm">ตอบคำถามพื้นฐานได้ไม่จำกัด</p>
+                            </div>
+                            <div class="bg-purple-900/30 p-4 rounded-lg">
+                                <h4 class="font-semibold text-purple-400 mb-2">บริการเสริม:</h4>
+                                <p class="text-purple-300 text-sm">วิเคราะห์ข้อมูลเบื้องต้น (มีค่าใช้จ่าย)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="openChatBot()" class="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-500 transition-colors">ทดลองใช้ฟรี</button>
+                    </div>
+                `
+            }
+        };
+
+        // Enhanced chatbot responses with more detailed information
+        const chatbotKnowledge = {
+            't-test': {
+                question: 't-test ใช้เมื่อไหร่และมีกี่ประเภท?',
+                answer: `t-test เป็นการทดสอบทางสถิติที่ใช้เปรียบเทียบค่าเฉลี่ยระหว่างกลุ่ม
+
+📊 **ประเภทของ t-test:**
+1. **Independent t-test** - ใช้เปรียบเทียบค่าเฉลี่ยระหว่าง 2 กลุ่มที่เป็นอิสระต่อกัน
+   - ตัวอย่าง: เปรียบเทียบผลการเรียนระหว่างนักเรียนชายและหญิง
+   - ข้อกำหนด: ข้อมูลต้องมีการแจกแจงปกติ และมีความแปรปรวนเท่ากัน
+
+2. **Paired t-test** - ใช้เปรียบเทียบค่าเฉลี่ยจากกลุ่มเดียวกันใน 2 ช่วงเวลา
+   - ตัวอย่าง: เปรียบเทียบน้ำหนักก่อนและหลังการลดน้ำหนัก
+   - ข้อกำหนด: ข้อมูลต้องเป็นคู่และมีความสัมพันธ์กัน
+
+3. **One-sample t-test** - ใช้เปรียบเทียบค่าเฉลี่ยของกลุ่มกับค่าที่กำหนด
+   - ตัวอย่าง: เปรียบเทียบคะแนน IQ ของนักเรียนกับค่าเฉลี่ย 100
+
+🔍 **เมื่อไหร่ควรใช้ t-test:**
+- เมื่อต้องการเปรียบเทียบค่าเฉลี่ยระหว่าง 2 กลุ่ม
+- ข้อมูลต้องเป็น continuous data
+- ข้อมูลมีการแจกแจงแบบปกติ (normally distributed)
+- ความแปรปรวนของทั้งสองกลุ่มไม่แตกต่างกันมาก (สำหรับ independent t-test)
+
+📈 **การแปลผล:**
+- p-value < 0.05 หมายถึง มีความแตกต่างอย่างมีนัยสำคัญทางสถิติ
+- ดูค่า t-value และ degrees of freedom ร่วมด้วย`
+            },
+            'anova': {
+                question: 'ANOVA คืออะไรและใช้เมื่อใด?',
+                answer: `ANOVA (Analysis of Variance) เป็นการวิเคราะห์ความแปรปรวนใช้เปรียบเทียบค่าเฉลี่ยระหว่าง 3 กลุ่มขึ้นไป
+
+📊 **ประเภทของ ANOVA:**
+1. **One-way ANOVA** - เปรียบเทียบค่าเฉลี่ยระหว่างกลุ่มโดยมี 1 ตัวแปรอิสระ
+   - ตัวอย่าง: เปรียบเทียบผลผลิตของพืชที่ได้รับปุ๋ย 3 ชนิด
+
+2. **Two-way ANOVA** - เปรียบเทียบค่าเฉลี่ยโดยมี 2 ตัวแปรอิสระ
+   - ตัวอย่าง: ศึกษาผลของชนิดปุ๋ยและวิธีการรดน้ำต่อผลผลิตพืช
+
+3. **Repeated Measures ANOVA** - ใช้กับข้อมูลที่วัดซ้ำในกลุ่มเดียวกัน
+   - ตัวอย่าง: วัดความดันเลือดในผู้ป่วยเดียวกัน 4 ครั้ง
+
+🔍 **เมื่อไหร่ควรใช้ ANOVA:**
+- เมื่อต้องการเปรียบเทียบค่าเฉลี่ยระหว่าง 3 กลุ่มขึ้นไป
+- ข้อมูลต้องมีการแจกแจงแบบปกติ
+- ความแปรปรวนของทุกกลุ่มต้องเท่ากัน (homogeneity of variance)
+- ข้อมูลเป็นอิสระต่อกัน (สำหรับ one-way ANOVA)
+
+📈 **การแปลผล:**
+- ถ้า p-value < 0.05 หมายถึง มีอย่างน้อย 1 กลุ่มที่แตกต่างกัน
+- ต้องทำ Post-hoc test (เช่น Tukey, Bonferroni) เพื่อหาว่ากลุ่มใดแตกต่างกัน`
+            },
+            'regression': {
+                question: 'การวิเคราะห์ถดถอยเชิงเส้นและโลจิสติกแตกต่างกันอย่างไร?',
+                answer: `การวิเคราะห์ถดถอยมีหลายประเภท ขึ้นกับประเภทของตัวแปรตาม
+
+📊 **Linear Regression (ถดถอยเชิงเส้น):**
+- **ตัวแปรตาม:** Continuous data (เช่น น้ำหนัก, ความสูง, รายได้)
+- **วัตถุประสงค์:** ทำนายค่าตัวแปรตามจากตัวแปรอิสระ
+- **สมการ:** Y = a + bX + e
+- **ตัวอย่าง:** ทำนายคะแนนสอบจากชั่วโมงการอ่านหนังสือ
+
+📊 **Logistic Regression (ถดถอยโลจิสติก):**
+- **ตัวแปรตาม:** Categorical data (เช่น เป็นโรค/ไม่เป็น, ผ่าน/ไม่ผ่าน)
+- **วัตถุประประสงค์:** ทำนายความน่าจะเป็นของการเกิดเหตุการณ์
+- **สมการ:** log(p/(1-p)) = a + bX
+- **ตัวอย่าง:** ทำนายความน่าจะเป็นของการเป็นโรคหัวใจจากอายุและความดันเลือด
+
+🔍 **ข้อแตกต่างหลัก:**
+1. **ประเภทตัวแปรตาม:** Linear ใช้กับ continuous, Logistic ใช้กับ categorical
+2. **การกระจายตัว:** Linear ใช้ normal distribution, Logistic ใช้ binomial distribution
+3. **การแปลผล:** Linear ทำนายค่า, Logistic ทำนายความน่าจะเป็น
+
+📈 **การเลือกใช้:**
+- ใช้ Linear regression เมื่อตัวแปรตามเป็นตัวเลขต่อเนื่อง
+- ใช้ Logistic regression เมื่อตัวแปรตามเป็นหมวดหมู่ (โดยเฉพาะ binary)`
+            },
+            'parametric': {
+                question: 'ควรใช้สถิติพารามิตริกหรือนอนพารามิตริกเมื่อไหร่?',
+                answer: `การเลือกระหว่างสถิติพารามิตริกและนอนพารามิตริกขึ้นกับสมมติฐานของข้อมูล
+
+📊 **สถิติพารามิตริก (Parametric):**
+- **ข้อกำหนด:** ข้อมูลมีการแจกแจงปกติ, ความแปรปรวนเท่ากัน, ข้อมูลต่อเนื่อง
+- **ตัวอย่าง:** t-test, ANOVA, Pearson correlation, Linear regression
+- **优点:** มีพลังทางสถิติสูงกว่าถ้าข้อมูลตรงตามสมมติฐาน
+
+📊 **สถิตินอนพารามิตริก (Non-parametric):**
+- **ใช้เมื่อ:** ข้อมูลไม่ตรงตามสมมติฐานของ parametric tests
+- **ตัวอย่าง:** Mann-Whitney U test, Kruskal-Wallis test, Spearman correlation
+- **优点:** ไม่ต้องกังวลเกี่ยวกับสมมติฐานการแจกแจง
+
+🔍 **แนวทางการเลือก:**
+1. **ตรวจสอบการแจกแจงปกติ** ด้วย Shapiro-Wilk test หรือ QQ plot
+2. **ตรวจสอบความแปรปรวน** ด้วย Levene's test
+3. **หากข้อมูลไม่ปกติ** ให้ใช้ non-parametric alternatives
+
+📈 **คู่เปรียบเทียบ:**
+- t-test → Mann-Whitney U test
+- ANOVA → Kruskal-Wallis test  
+- Pearson correlation → Spearman correlation
+- Paired t-test → Wilcoxon signed-rank test
+
+💡 **คำแนะนำ:** เริ่มต้นด้วยการตรวจสอบสมมติฐานก่อนเลือกวิธีการวิเคราะห์`
+            }
+        };
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Smooth scrolling
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Open service modal
+        function openService(serviceId) {
+            const service = services[serviceId];
+            if (service) {
+                const modal = document.getElementById('service-modal');
+                const content = document.getElementById('service-content');
+                
+                content.innerHTML = `
+                    <button class="close-btn" onclick="closeService()">×</button>
+                    ${service.details}
+                `;
+                
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Close service modal
+        function closeService() {
+            const modal = document.getElementById('service-modal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Open chat bot
+        function openChatBot() {
+            const chatBot = document.getElementById('chat-bot');
+            chatBot.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close chat bot
+        function closeChatBot() {
+            const chatBot = document.getElementById('chat-bot');
+            chatBot.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Enhanced send message function with web search simulation
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const messages = document.getElementById('chat-messages');
+            const message = input.value.trim();
+            
+            if (message) {
+                // Add user message
+                messages.innerHTML += `
+                    <div class="bg-blue-600/30 p-3 rounded-lg mb-2 text-right">
+                        <strong class="text-blue-300">คุณ:</strong> ${message}
+                    </div>
+                `;
+                
+                // Show typing indicator
+                messages.innerHTML += `
+                    <div class="bg-slate-600 p-3 rounded-lg mb-2">
+                        <strong class="text-cyan-400">StatBot:</strong> 
+                        <span class="typing-dots">
+                            <span>.</span><span>.</span><span>.</span>
+                        </span>
+                    </div>
+                `;
+                messages.scrollTop = messages.scrollHeight;
+
+                // Simulate API call delay
+                setTimeout(async () => {
+                    // Remove typing indicator
+                    const typingIndicator = messages.querySelector('.typing-dots');
+                    if (typingIndicator) {
+                        typingIndicator.parentElement.remove();
+                    }
+
+                    let response = await generateBotResponse(message);
+                    
+                    messages.innerHTML += `
+                        <div class="bg-slate-600 p-3 rounded-lg mb-2">
+                            <strong class="text-cyan-400">StatBot:</strong> ${response}
+                        </div>
+                    `;
+                    messages.scrollTop = messages.scrollHeight;
+                }, 2000);
+                
+                input.value = '';
+            }
+        }
+
+        // Enhanced bot response generator
+        async function generateBotResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Check for known questions
+            for (const [key, knowledge] of Object.entries(chatbotKnowledge)) {
+                if (lowerMessage.includes(key) || knowledge.question.includes(message)) {
+                    return knowledge.answer;
+                }
+            }
+
+            // Simulate web search for unknown questions
+            const searchTerms = extractSearchTerms(message);
+            const simulatedResults = await simulateWebSearch(searchTerms);
+            
+            return `เกี่ยวกับ "${message}":
+
+${simulatedResults}
+
+💡 **คำแนะนำ:** 
+- หากต้องการคำตอบที่ละเอียดยิ่งขึ้น กรุณาระบุรายละเอียดเพิ่มเติม
+- หรือสามารถนัดหมายปรึกษากับผู้เชี่ยวชาญเฉพาะทางได้ฟรี 30 นาที
+
+📚 **แหล่งข้อมูลอ้างอิง:**
+- Journal of Statistical Education
+- Statistics How To
+- StatTrek`;
+        }
+
+        // Extract search terms from message
+        function extractSearchTerms(message) {
+            const statsKeywords = ['สถิติ', 'วิเคราะห์', 'ข้อมูล', 't-test', 'anova', 'regression', 'ความแปรปรวน', 'ค่าเฉลี่ย'];
+            return statsKeywords.filter(keyword => 
+                message.toLowerCase().includes(keyword.toLowerCase())
+            );
+        }
+
+        // Simulate web search
+        async function simulateWebSearch(searchTerms) {
+            // This would be replaced with actual API calls in production
+            const responses = [
+                "จากการค้นหาข้อมูลในแหล่งความรู้ทางสถิติ พบว่าเรื่องนี้เกี่ยวข้องกับแนวคิดพื้นฐานทางสถิติที่สำคัญ",
+                "ตามบทความในวารสารทางสถิติ เรื่องนี้มีการอธิบายไว้ในกรอบแนวคิดของการวิเคราะห์ข้อมูล",
+                "แหล่งข้อมูลออนไลน์แนะนำให้ตรวจสอบสมมติฐานพื้นฐานก่อนการเลือกวิธีการวิเคราะห์",
+                "ผู้เชี่ยวชาญแนะนำให้พิจารณาประเภทของข้อมูลและวัตถุประสงค์การวิจัยเป็นหลัก"
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        // Ask sample question
+        function askQuestion(question) {
+            document.getElementById('chat-input').value = question;
+            sendMessage();
+        }
+
+        // Service request functions
+        function requestService(serviceType) {
+            alert(`ขอบคุณที่สนใจบริการ ${services[serviceType].title}!
+เราจะติดต่อกลับไปภายใน 24 ชั่วโมง`);
+            closeService();
+        }
+
+        function requestConsultation() {
+            alert('ขอบคุณที่สนใจบริการให้คำปรึกษา!เราจะติดต่อกลับไปเพื่อนัดหมายการปรึกษาภายใน 24 ชั่วโมง');
+            closeService();
+        }
+
+        function enrollCourse() {
+            alert('ขอบคุณที่สนใจคอร์สเรียนของเรา!เราจะส่งรายละเอียดคอร์สเรียนและวิธีการลงทะเบียนไปยังอีเมลของคุณ');
+            closeService();
+        }
+
+        function submitConsultation() {
+            alert('ขอบคุณสำหรับการส่งคำขอการปรึกษาฟรี!เราจะติดต่อกลับไปภายใน 24 ชั่วโมงเพื่อนัดหมายเวลาที่สะดวก');
+            closeService();
+        }
+
+        // Fade in animation on scroll
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Initialize animations
+        window.addEventListener('scroll', handleScrollAnimation);
+        window.addEventListener('load', handleScrollAnimation);
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                // Close mobile menu if open
+                document.getElementById('mobileMenu').classList.add('hidden');
+            });
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            const serviceModal = document.getElementById('service-modal');
+            const chatBot = document.getElementById('chat-bot');
+            
+            if (e.target === serviceModal) {
+                closeService();
+            }
+            if (e.target === chatBot) {
+                closeChatBot();
+            }
+        });
+    </script>
+</body>
+</html>
