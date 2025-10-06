@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก - StatGUIDE.com</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        }
+        .form-input {
+            background: #334155;
+            border: 1px solid #475569;
+            color: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            width: 100%;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 min-h-screen flex items-center justify-center py-8">
+    <div class="max-w-md w-full mx-4">
+        <div class="text-center mb-8">
+            <a href="index.html" class="text-2xl font-bold text-blue-400 inline-block">StatGUIDE</a>
+            <span class="text-sm text-slate-400 ml-1">.com</span>
+            <h1 class="text-2xl font-bold text-white mt-4">สมัครสมาชิก</h1>
+            <p class="text-slate-400 mt-2">เริ่มต้นใช้งานบริการทั้งหมดของเรา</p>
+        </div>
+
+        <div class="bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-700">
+            <!-- Google Sign Up Button -->
+            <button id="google-signup" class="w-full bg-white text-slate-900 py-3 rounded-lg font-semibold hover:bg-slate-100 transition-colors flex items-center justify-center gap-3 mb-4">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                สมัครสมาชิกด้วย Google
+            </button>
+
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-600"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-slate-800 text-slate-400">หรือ</span>
+                </div>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="register-form" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-300 mb-2">ชื่อ</label>
+                        <input type="text" id="firstName" class="form-input" placeholder="ชื่อ" required>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-2">นามสกุล</label>
+                        <input type="text" id="lastName" class="form-input" placeholder="นามสกุล" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-300 mb-2">อีเมล</label>
+                    <input type="email" id="email" class="form-input" placeholder="กรุณากรอกอีเมล" required>
+                </div>
+                <div>
+                    <label class="block text-slate-300 mb-2">รหัสผ่าน</label>
+                    <input type="password" id="password" class="form-input" placeholder="กรุณากรอกรหัสผ่าน (อย่างน้อย 8 ตัวอักษร)" required minlength="8">
+                </div>
+                <div>
+                    <label class="block text-slate-300 mb-2">ยืนยันรหัสผ่าน</label>
+                    <input type="password" id="confirmPassword" class="form-input" placeholder="กรุณากรอกรหัสผ่านอีกครั้ง" required>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="agreeTerms" class="w-4 h-4 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500 focus:ring-2" required>
+                    <label for="agreeTerms" class="ml-2 text-sm text-slate-300">
+                        ฉันยอมรับ 
+                        <a href="#" class="text-blue-400 hover:text-blue-300">ข้อกำหนดและเงื่อนไข</a>
+                        และ
+                        <a href="#" class="text-blue-400 hover:text-blue-300">นโยบายความเป็นส่วนตัว</a>
+                    </label>
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-500 transition-colors">
+                    สมัครสมาชิก
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-slate-400">
+                    มีบัญชีอยู่แล้ว? 
+                    <a href="login.html" class="text-blue-400 hover:text-blue-300 font-semibold">เข้าสู่ระบบ</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Google Sign Up Simulation
+        document.getElementById('google-signup').addEventListener('click', function() {
+            // In a real app, this would redirect to Google OAuth
+            // For demo, we'll simulate a successful registration
+            simulateRegistration('google');
+        });
+
+        // Registration Form
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            // Validation
+            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+                alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('รหัสผ่านไม่ตรงกัน');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร');
+                return;
+            }
+            
+            if (!agreeTerms) {
+                alert('กรุณายอมรับข้อกำหนดและเงื่อนไข');
+                return;
+            }
+            
+            simulateRegistration('email');
+        });
+
+        // Simulate registration function
+        function simulateRegistration(type) {
+            // Store registration status
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('loginMethod', type);
+            localStorage.setItem('userType', 'member');
+            localStorage.setItem('isNewUser', 'true');
+            
+            // Redirect to main page
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

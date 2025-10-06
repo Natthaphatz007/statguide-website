@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คอร์สเรียน - StatGUIDE.com</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        }
+        .course-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: #334155;
+        }
+        .locked-content {
+            position: relative;
+        }
+        .locked-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200">
+    <!-- Navigation -->
+    <nav class="bg-slate-800 shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-bold text-blue-400">StatGUIDE</a>
+                    <div class="text-sm text-slate-400 ml-2">.com</div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-slate-300 hover:text-blue-400 transition-colors">หน้าแรก</a>
+                    <a href="courses.html" class="text-blue-400 font-semibold">คอร์สเรียน</a>
+                    <a href="index.html#services" class="text-slate-300 hover:text-blue-400 transition-colors">บริการ</a>
+                    <a href="index.html#about" class="text-slate-300 hover:text-blue-400 transition-colors">เกี่ยวกับเรา</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="user-status" class="text-slate-300 text-sm"></span>
+                    <button id="logout-btn" class="bg-slate-700 text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors hidden">
+                        ออกจากระบบ
+                    </button>
+                    <a href="login.html" id="login-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                        เข้าสู่ระบบ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg pt-20 pb-16 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">คอร์สเรียนออนไลน์</h1>
+                <p class="text-xl mb-8 text-slate-200 max-w-3xl mx-auto">
+                    เรียนรู้สถิติจากผู้เชี่ยวชาญ ด้วยคอร์สเรียนที่ออกแบบมาเพื่อนักวิจัยโดยเฉพาะ
+                    พัฒนาทักษะการวิเคราะห์ข้อมูลและเพิ่มความน่าเชื่อถือให้งานวิจัยของคุณ
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="py-20 bg-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">คอร์สเรียนทั้งหมด</h2>
+                <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                    เลือกคอร์สที่เหมาะกับระดับความสามารถและความสนใจของคุณ
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Course 1: Basic Statistics -->
+                <div class="course-card p-6 rounded-xl">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             alt="สถิติพื้นฐาน" class="w-full h-48 object-cover rounded-lg mb-4">
+                        <div class="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            ฟรี
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">สถิติพื้นฐานสำหรับงานวิจัย</h3>
+                    <p class="text-slate-300 mb-4 text-sm">เรียนรู้แนวคิดพื้นฐานทางสถิติที่จำเป็นสำหรับการทำวิจัย</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-slate-400 text-sm">
+                            <span>⭐ 4.8 (124 รีวิว)</span>
+                        </div>
+                        <div class="text-slate-400 text-sm">
+                            <span>🕒 8 ชั่วโมง</span>
+                        </div>
+                    </div>
+                    <button onclick="openCourse('basic-statistics')" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-500 transition-colors">
+                        เริ่มเรียนเลย
+                    </button>
+                </div>
+
+                <!-- Course 2: Data Analysis with R -->
+                <div class="course-card p-6 rounded-xl">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             alt="การวิเคราะห์ข้อมูลด้วย R" class="w-full h-48 object-cover rounded-lg mb-4">
+                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            สมาชิก
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">การวิเคราะห์ข้อมูลด้วย R</h3>
+                    <p class="text-slate-300 mb-4 text-sm">เรียนรู้การใช้งาน R ในการวิเคราะห์ข้อมูลทางสถิติอย่างมืออาชีพ</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-slate-400 text-sm">
+                            <span>⭐ 4.9 (89 รีวิว)</span>
+                        </div>
+                        <div class="text-slate-400 text-sm">
+                            <span>🕒 16 ชั่วโมง</span>
+                        </div>
+                    </div>
+                    <div id="r-course-access" class="locked-content">
+                        <button onclick="checkAccess('r-course')" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                            เริ่มเรียน
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Course 3: Advanced Statistics -->
+                <div class="course-card p-6 rounded-xl">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             alt="สถิติขั้นสูง" class="w-full h-48 object-cover rounded-lg mb-4">
+                        <div class="absolute top-4 right-4 bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            สมาชิก
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">สถิติขั้นสูงสำหรับงานวิจัย</h3>
+                    <p class="text-slate-300 mb-4 text-sm">เรียนรู้เทคนิคสถิติขั้นสูงสำหรับการวิจัยที่ซับซ้อน</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-slate-400 text-sm">
+                            <span>⭐ 4.7 (67 รีวิว)</span>
+                        </div>
+                        <div class="text-slate-400 text-sm">
+                            <span>🕒 20 ชั่วโมง</span>
+                        </div>
+                    </div>
+                    <div id="advanced-course-access" class="locked-content">
+                        <button onclick="checkAccess('advanced-course')" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-500 transition-colors">
+                            เริ่มเรียน
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Player Modal -->
+    <div id="video-modal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden">
+        <div class="max-w-4xl mx-auto h-full flex items-center justify-center p-4">
+            <div class="bg-slate-800 rounded-xl w-full">
+                <div class="flex justify-between items-center p-4 border-b border-slate-700">
+                    <h3 id="video-title" class="text-xl font-semibold text-white">ชื่อวิดีโอ</h3>
+                    <button onclick="closeVideo()" class="text-slate-400 hover:text-white text-2xl">×</button>
+                </div>
+                <div class="p-4">
+                    <div class="aspect-w-16 aspect-h-9 bg-black rounded-lg mb-4">
+                        <!-- Video player would go here -->
+                        <div id="video-player" class="w-full h-96 bg-slate-900 rounded-lg flex items-center justify-center text-slate-400">
+                            [วิดีโอเล่นอยู่ที่นี่]
+                        </div>
+                    </div>
+                    <div class="text-slate-300">
+                        <h4 class="font-semibold mb-2">คำอธิบาย:</h4>
+                        <p id="video-description">คำอธิบายวิดีโอจะแสดงที่นี่</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Required Modal -->
+    <div id="access-modal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden">
+        <div class="max-w-md mx-auto h-full flex items-center justify-center p-4">
+            <div class="bg-slate-800 rounded-xl w-full p-6">
+                <h3 class="text-xl font-semibold text-white mb-4">ต้องการการยืนยันตัวตน</h3>
+                <p class="text-slate-300 mb-6">
+                    คอร์สเรียนนี้ต้องการการยืนยันตัวตนเพื่อเข้าถึงเนื้อหา 
+                    กรุณาเข้าสู่ระบบหรือสมัครสมาชิกเพื่อเริ่มเรียน
+                </p>
+                <div class="flex flex-col gap-3">
+                    <a href="login.html" class="bg-blue-600 text-white py-3 rounded-lg text-center hover:bg-blue-500 transition-colors">
+                        เข้าสู่ระบบ
+                    </a>
+                    <a href="register.html" class="bg-green-600 text-white py-3 rounded-lg text-center hover:bg-green-500 transition-colors">
+                        สมัครสมาชิก
+                    </a>
+                    <button onclick="closeAccessModal()" class="border border-slate-600 text-slate-300 py-3 rounded-lg hover:bg-slate-700 transition-colors">
+                        ปิด
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check user status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkUserStatus();
+        });
+
+        // Check user login status
+        function checkUserStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userType = localStorage.getItem('userType');
+            const loginMethod = localStorage.getItem('loginMethod');
+            
+            const userStatus = document.getElementById('user-status');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginBtn = document.getElementById('login-btn');
+            
+            if (isLoggedIn) {
+                let statusText = '';
+                if (userType === 'member') {
+                    statusText = `สมาชิก (${loginMethod === 'google' ? 'Google' : 'อีเมล'})`;
+                } else {
+                    statusText = 'ผู้เยี่ยมชม';
+                }
+                
+                userStatus.textContent = statusText;
+                logoutBtn.classList.remove('hidden');
+                loginBtn.classList.add('hidden');
+                
+                // Update course access based on user type
+                updateCourseAccess(userType);
+            } else {
+                userStatus.textContent = '';
+                logoutBtn.classList.add('hidden');
+                loginBtn.classList.remove('hidden');
+                
+                // Lock all member-only courses
+                updateCourseAccess('guest');
+            }
+        }
+
+        // Update course access based on user type
+        function updateCourseAccess(userType) {
+            const memberCourses = document.querySelectorAll('.locked-content');
+            
+            if (userType === 'member') {
+                // Unlock member courses
+                memberCourses.forEach(course => {
+                    course.classList.remove('locked-content');
+                });
+            } else {
+                // Lock member courses for guests
+                memberCourses.forEach(course => {
+                    if (!course.querySelector('.locked-overlay')) {
+                        const overlay = document.createElement('div');
+                        overlay.className = 'locked-overlay';
+                        overlay.innerHTML = `
+                            <svg class="w-12 h-12 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                            <p class="text-slate-300 font-semibold">สมาชิกเท่านั้น</p>
+                            <p class="text-slate-400 text-sm mt-1">สมัครสมาชิกเพื่อเข้าถึง</p>
+                        `;
+                        course.appendChild(overlay);
+                    }
+                });
+            }
+        }
+
+        // Logout function
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userType');
+            localStorage.removeItem('loginMethod');
+            localStorage.removeItem('isNewUser');
+            window.location.reload();
+        });
+
+        // Open course
+        function openCourse(courseId) {
+            if (courseId === 'basic-statistics') {
+                // Free course - always accessible
+                openVideo('สถิติพื้นฐาน - บทนำ', 'เรียนรู้แนวคิดพื้นฐานทางสถิติที่จำเป็นสำหรับการทำวิจัย');
+            }
+        }
+
+        // Check access for member-only courses
+        function checkAccess(courseId) {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userType = localStorage.getItem('userType');
+            
+            if (isLoggedIn && userType === 'member') {
+                // Member has access
+                if (courseId === 'r-course') {
+                    openVideo('การวิเคราะห์ข้อมูลด้วย R - บทนำ', 'เรียนรู้พื้นฐานการใช้งาน R ในการวิเคราะห์ข้อมูล');
+                } else if (courseId === 'advanced-course') {
+                    openVideo('สถิติขั้นสูง - บทนำ', 'แนะนำเทคนิคสถิติขั้นสูงสำหรับการวิจัยที่ซับซ้อน');
+                }
+            } else {
+                // Show access required modal
+                document.getElementById('access-modal').classList.remove('hidden');
+            }
+        }
+
+        // Open video player
+        function openVideo(title, description) {
+            document.getElementById('video-title').textContent = title;
+            document.getElementById('video-description').textContent = description;
+            document.getElementById('video-modal').classList.remove('hidden');
+        }
+
+        // Close video player
+        function closeVideo() {
+            document.getElementById('video-modal').classList.add('hidden');
+        }
+
+        // Close access modal
+        function closeAccessModal() {
+            document.getElementById('access-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
